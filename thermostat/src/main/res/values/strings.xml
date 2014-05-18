@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">My Module</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Thermostat</string>
     <string name="action_settings">Settings</string>
-
+    <string name="facebook_app_id">881738505176589</string>
 </resources>
