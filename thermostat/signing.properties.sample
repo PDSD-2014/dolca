@@ -1,0 +1,4 @@
+keystore.path=keystore.jks
+keystore.password=*******
+alias.name=name
+alias.password=********

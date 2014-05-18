@@ -16,6 +16,17 @@ android {
     compileSdkVersion 19
     buildToolsVersion "19.0.2"
 
+    Properties props = new Properties()
+    props.load(new FileInputStream(file("signing.properties")))
+
+    signingConfigs {
+        release {
+            storeFile file(props['keystore.path'])
+            storePassword props['keystore.password']
+            keyAlias props['alias.name']
+            keyPassword props['alias.password']
+        }
+    }
     defaultConfig {
         minSdkVersion 7
         targetSdkVersion 19
@@ -26,6 +37,7 @@ android {
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
         }
     }
 }
