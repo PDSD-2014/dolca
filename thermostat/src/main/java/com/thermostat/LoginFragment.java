@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
@@ -14,9 +16,10 @@ import com.facebook.widget.LoginButton;
 
 import java.util.Arrays;
 
-public class LoginFragment extends Fragment {
+public class LoginFragment extends Fragment implements View.OnClickListener {
 
-    private static final String TAG = "MainFragment";
+    private static final Authentication auth = Authentication.getInstance();
+
     private UiLifecycleHelper uiHelper;
 
     private Session.StatusCallback callback = new Session.StatusCallback() {
@@ -29,25 +32,54 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         uiHelper = new UiLifecycleHelper(getActivity(), callback);
         uiHelper.onCreate(savedInstanceState);
     }
 
     private void onSessionStateChange(Session session, SessionState state, Exception exception) {
         if (state.isOpened()) {
-            Log.i(TAG, "Logged in...");
-        } else if (state.isClosed()) {
-            Log.i(TAG, "Logged out...");
+            Session facebookSession = Session.getActiveSession();
+            String facebookToken = session.getAccessToken();
+
+            if (auth.loginWithFacebook(facebookToken)) {
+                ((MainActivity) getActivity()).onLogin();
+            }
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+        // Create the view
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
+
+        // Se Facebook Login button properties
         LoginButton authButton = (LoginButton) view.findViewById(R.id.authButton);
         authButton.setFragment(this);
         authButton.setReadPermissions(Arrays.asList("email"));
+
+        // Set login button action
+        Button loginButton = (Button) view.findViewById(R.id.login_button);
+        loginButton.setOnClickListener(this);
+
         return view;
+    }
+
+    @Override
+    public void onClick (View view) {
+        EditText emailField = (EditText) getView().findViewById(R.id.email_field);
+        EditText passwordField = (EditText) getView().findViewById(R.id.password_field);
+
+        String email = emailField.getText().toString();
+        String password = passwordField.getText().toString();
+
+        Authentication auth = Authentication.getInstance();
+        boolean ok = auth.loginWithEmail(email, password);
+
+        if (ok) {
+            ((MainActivity) getActivity()).onLogin();
+        }
     }
 
     @Override
@@ -62,8 +94,6 @@ public class LoginFragment extends Fragment {
                 (session.isOpened() || session.isClosed()) ) {
             onSessionStateChange(session, session.getState(), null);
         }
-
-        uiHelper.onResume();
 
         uiHelper.onResume();
     }
