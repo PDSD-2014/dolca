@@ -1,1 +1,2 @@
 include ':thermostat'
+include ':libraries:facebook'
