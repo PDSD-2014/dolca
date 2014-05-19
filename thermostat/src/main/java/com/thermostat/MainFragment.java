@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.zip.Inflater;
-
 public class MainFragment extends Fragment {
 
     @Override
