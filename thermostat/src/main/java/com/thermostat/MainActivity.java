@@ -5,11 +5,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.crashlytics.android.Crashlytics;
+import com.thermostat.model.Place;
 
 public class MainActivity extends ActionBarActivity {
 
-    private LoginFragment loginFragment;
-    private MainFragment mainFragment;
     private static final Authentication auth = Authentication.getInstance();
 
     @Override
@@ -18,17 +17,6 @@ public class MainActivity extends ActionBarActivity {
         Crashlytics.start(this);
 
         setContentView(R.layout.activity_main);
-
-        // Recover fragment instances
-        if (savedInstanceState != null) {
-
-            // Or set the fragment from restored state info
-            loginFragment = (LoginFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.login_fragment);
-
-            mainFragment = (MainFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.main_fragment);
-        }
 
         if (savedInstanceState == null) {
 
@@ -43,11 +31,7 @@ public class MainActivity extends ActionBarActivity {
 
     protected void onLogin () {
 
-        synchronized (this) {
-            if (mainFragment == null) {
-                mainFragment = new MainFragment();
-            }
-        }
+        MainFragment mainFragment = new MainFragment();
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -57,15 +41,21 @@ public class MainActivity extends ActionBarActivity {
 
     protected void onLogout() {
 
-        synchronized (this) {
-            if (loginFragment == null) {
-                loginFragment = new LoginFragment();
-            }
-        }
+        LoginFragment loginFragment = new LoginFragment();
 
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.main_activity, loginFragment)
+                .commit();
+    }
+
+    public void onPlaceClick(Place place) {
+
+        PlaceFragment placeFragment = new PlaceFragment(place);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.main_activity, placeFragment)
                 .commit();
     }
 
